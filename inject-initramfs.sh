@@ -14,9 +14,7 @@ append() {
 
 extract() {
     echo "Extracting initramfs..."
-    start=$(binwalk "$rootdir/initrd.img"|grep LZMA|cut -f1 -d' ')
-    dd if="$rootdir/initrd.img" bs=16M | (dd of=/dev/null bs=$start count=1; dd bs=16M) | \
-       unlzma | cpio -D "$fsdir" -id
+    unmkinitramfs "$rootdir/initrd.img" "$fsdir"
 }
 
 inject() {
@@ -27,9 +25,8 @@ inject() {
 
 repack() {
     echo "Repacking initramfs..."
-    mv "$rootdir/initrd.img" "$tmpdir/initrd.img"
-    dd if="$tmpdir/initrd.img" of="$rootdir/initrd.img" bs=$start count=1
-    (cd "$fsdir"; find . | cpio -ov | lzma -c) >> "$rootdir/initrd.img"
+    (cd "$fsdir/early"; find . | cpio -H newc -o) > "$rootdir/initrd.img"
+    (cd "$fsdir/main"; find . | cpio -H newc -o | gzip -c) >> "$rootdir/initrd.img"
 }
 
 resquash() {
@@ -65,8 +62,8 @@ initramfs="$2"
 tmpdir=$(mktemp -d -t inject-XXXXXXXXXX)
 rootdir="$tmpdir/root"
 fsdir="$tmpdir/fs"
-confdir="$fsdir"/conf/conf.d
-scriptdir="$fsdir"/scripts
+confdir="$fsdir"/main/conf/conf.d
+scriptdir="$fsdir"/main/scripts
 
 mkdir -p "$confdir" "$scriptdir"
 
