@@ -5,13 +5,6 @@ unsquash() {
     unsquashfs -d "$rootdir" "$kernel"
 }
 
-append() {
-    echo "Appending to initramfs..."
-    cp -rap "$initramfs"/conf/* "$confdir"
-    cp -rap "$initramfs"/scripts/* "$scriptdir"
-    (cd "$fsdir"; find . | cpio -o --no-absolute-filenames >> "$rootdir/initrd.img")
-}
-
 extract() {
     echo "Extracting initramfs..."
     unmkinitramfs "$rootdir/initrd.img" "$fsdir"
