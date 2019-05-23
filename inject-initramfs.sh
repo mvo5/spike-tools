@@ -1,4 +1,11 @@
 #!/bin/bash
+#
+# Use this script to inject content from core-build/initramfs into an existing
+# kernel snap.
+#
+# Example:
+# $ ./inject-initramfs -o kernel.snap ../kernel_214.snap core-build/initramfs
+
 
 unsquash() {
     echo "Unsquashing $kernel..."
