@@ -23,21 +23,27 @@ repack() {
 }
 
 resquash() {
-    num=1
-    while [ -f "$kernel.$num" ]; do
-        num=$((num + 1))
-    done
-    mksquashfs "$rootdir" "$kernel.$num" -noappend -comp xz -no-xattrs -no-fragments
-    echo "Created $kernel.$num"
+    if [ -z "$output" ]; then
+        num=1
+        while [ -f "$kernel.$num" ]; do
+            num=$((num + 1))
+        done
+        output="$kernel.$num"
+    fi
+    mksquashfs "$rootdir" "$output" -noappend -comp xz -no-xattrs -no-fragments
+    echo "Created $output"
 }
 
 usage() {
-    echo "Usage: $0 <kernel snap> <initramfs>"
+    echo "Usage: $0 [-o output] <kernel snap> <initramfs>"
     exit
 }
 
-while getopts "h" opt; do
+while getopts "ho:" opt; do
     case "${opt}" in
+        o)
+            output="$OPTARG"
+            ;;
         *)
             usage
             ;;
