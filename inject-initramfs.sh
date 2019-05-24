@@ -7,6 +7,9 @@
 # $ ./inject-initramfs -o kernel.snap ../kernel_214.snap core-build/initramfs
 
 
+source /usr/share/initramfs-tools/hook-functions
+
+
 unsquash() {
     echo "Unsquashing $kernel..."
     unsquashfs -d "$rootdir" "$kernel"
@@ -21,6 +24,12 @@ inject() {
     echo "Injecting $initramfs..."
     cp -rap "$initramfs"/conf/* "$confdir"
     cp -rap "$initramfs"/scripts/* "$scriptdir"
+
+    # rebuild script order cache
+    CONFDIR="$fsdir/main"
+    for b in $(cd "$scriptdir" && find . -mindepth 1 -type d); do
+        cache_run_scripts "$fsdir/main" "/scripts/${b#./}"
+    done
 }
 
 add_binary() {
