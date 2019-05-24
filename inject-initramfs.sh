@@ -23,6 +23,16 @@ inject() {
     cp -rap "$initramfs"/scripts/* "$scriptdir"
 }
 
+add_binary() {
+    if [ ! -z "$addlist" ]; then
+        list=$(echo $addlist | tr , '\n')
+        for bin in $list; do
+            echo "Installing $bin..."
+            cp $bin "$bindir"
+        done
+    fi
+}
+
 repack() {
     echo "Repacking initramfs..."
     (cd "$fsdir/early"; find . | cpio -H newc -o) > "$rootdir/initrd.img"
@@ -42,14 +52,17 @@ resquash() {
 }
 
 usage() {
-    echo "Usage: $0 [-o output] <kernel snap> <initramfs>"
+    echo "Usage: $0 [-o output] [-a bins] <kernel snap> <initramfs>"
     exit
 }
 
-while getopts "ho:" opt; do
+while getopts "ho:b:" opt; do
     case "${opt}" in
         o)
             output="$OPTARG"
+            ;;
+        b)
+            addlist="$OPTARG"
             ;;
         *)
             usage
@@ -68,8 +81,9 @@ initramfs="$2"
 tmpdir=$(mktemp -d -t inject-XXXXXXXXXX)
 rootdir="$tmpdir/root"
 fsdir="$tmpdir/fs"
-confdir="$fsdir"/main/conf/conf.d
-scriptdir="$fsdir"/main/scripts
+confdir="$fsdir"/main/conf/conf.d/
+scriptdir="$fsdir"/main/scripts/
+bindir="$fsdir"/main/bin/
 
 mkdir -p "$confdir" "$scriptdir"
 
@@ -82,6 +96,7 @@ trap finish EXIT
 unsquash
 extract
 inject
+add_binary
 repack
 resquash
 
