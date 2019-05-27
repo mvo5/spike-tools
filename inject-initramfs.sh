@@ -56,7 +56,7 @@ resquash() {
         done
         output="$kernel.$num"
     fi
-    mksquashfs "$rootdir" "$output" -noappend -comp xz -no-xattrs -no-fragments
+    mksquashfs "$rootdir" "$output" -noappend -comp gzip -no-xattrs -no-fragments
     echo "Created $output"
 }
 
