@@ -9,6 +9,7 @@
 
 source /usr/share/initramfs-tools/hook-functions
 
+set -e
 
 unsquash() {
     echo "Unsquashing $kernel..."
