@@ -93,7 +93,7 @@ fi
 
 # FIXME: once we put snapd in channel=20 this is no longer needed
 #        we can just use the "snapd" snap from channel=20
-if [ ! -x ./go/src/github.com/snapcore/snapd/cmd/snap/snap ]; then
+if [ ! -x ./go/snap ]; then
     get_snapd_uc20
 fi
 
@@ -103,7 +103,7 @@ fi
 
 # get the snaps
 snap download --channel=18 pc-kernel
-snap download snapd    # --channel=20 (once available)
+snap download snapd  --channel=edge/experimental-uc20
 snap download core18   # core20 (once available)
 snap download --channel=20/edge pc
 
