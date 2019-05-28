@@ -16,27 +16,27 @@ build_mke2fs() {
     (cd e2fsprogs
      git checkout v1.45.1
      ./configure --disable-elf-shlibs
-     make LDFLAGS=-static)
-    cp e2fsprogs/misc/mke2fs .
+     make LDFLAGS=-static
+    )
 }
 
 build_grub_editenv() {
     git clone git://git.savannah.gnu.org/grub.git
-    (cd grub; \
-     ./bootstrap; \
-     ./configure --disable-device-mapper; \
-     make; \
-     rm grub-editenv; \
-     make grub-editenv LDFLAGS=-static)
-    cp grub/grub-editenv .
+    (cd grub
+     ./bootstrap
+     ./configure --disable-device-mapper
+     make
+     rm grub-editenv
+     make grub-editenv LDFLAGS=-static
+    )
 }
 
 get_ubuntu_core() {
     prnum=$1
     git clone https://github.com/CanonicalLtd/ubuntu-image
-    (cd ubuntu-image;
-     git fetch origin pull/$prnum/head:pr-$prnum
-     git checkout pr-$prnum
+    (cd ubuntu-image
+     git fetch origin "pull/$prnum/head:pr-$prnum"
+     git checkout pr-"$prnum"
     )
 }
 
@@ -50,9 +50,9 @@ get_ubuntu_image() {
 add_bind_mount() {
     SRC="$1"
     DST="$2"
-    if [ -e "$2" ]; then
-        sudo mount -o bind "$1" "$2"
-        add_cleanup "sudo umount $2"
+    if [ -e "$DST" ]; then
+        sudo mount -o bind "$SRC" "$DST"
+        add_cleanup "sudo umount $DST"
     fi
 }
 
