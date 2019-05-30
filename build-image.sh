@@ -6,8 +6,12 @@ export PYTHONPATH=./ubuntu-image
 
 ./inject-initramfs.sh \
     -o pc-kernel_*.snap \
-    -b ./e2fsprogs/misc/mke2fs,grub/grub-editenv \
     pc-kernel_*.snap core-build/initramfs
+
+sudo ./inject-core.sh \
+    -o core18_*.snap \
+    -b grub/grub-editenv \
+    core18_*.snap
 
 ubuntu-image/ubuntu-image snap \
     --image-size 4G \
