@@ -6,6 +6,7 @@ export PYTHONPATH=./ubuntu-image
 
 ./inject-initramfs.sh \
     -o pc-kernel_*.snap \
+    -b grub/grub-editenv \
     pc-kernel_*.snap core-build/initramfs
 
 sudo ./inject-snap.sh \
