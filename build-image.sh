@@ -8,10 +8,17 @@ export PYTHONPATH=./ubuntu-image
     -o pc-kernel_*.snap \
     pc-kernel_*.snap core-build/initramfs
 
-sudo ./inject-core.sh \
+sudo ./inject-snap.sh \
     -o core18_*.snap \
-    -b grub/grub-editenv \
+    -d bin \
+    grub/grub-editenv \
     core18_*.snap
+
+./inject-snap.sh \
+    -o snapd_*.snap \
+    -d usr/lib/snapd \
+    go/snapd \
+    snapd_*.snap
 
 ubuntu-image/ubuntu-image snap \
     --image-size 4G \

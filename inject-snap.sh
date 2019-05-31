@@ -1,9 +1,9 @@
 #!/bin/bash
 #
-# Use this script to inject stuff into an existing core snap.
+# Use this script to inject stuff into an existing snap.
 #
 # Example:
-# $ ./inject-core -b mke2fs -o core18.snap ../core18_970.snap
+# $ ./inject-snap -o core18.snap -d bin mke2fs ../core18_970.snap
 
 
 source /usr/share/initramfs-tools/hook-functions
@@ -11,16 +11,16 @@ source /usr/share/initramfs-tools/hook-functions
 set -e
 
 unsquash() {
-    echo "Unsquashing $core..."
-    unsquashfs -d "$rootdir" "$core"
+    echo "Unsquashing $snap..."
+    unsquashfs -d "$rootdir" "$snap"
 }
 
-add_binary() {
+add_file() {
     if [ ! -z "$addlist" ]; then
         list=$(echo $addlist | tr , '\n')
-        for bin in $list; do
-            echo "Installing $bin..."
-            cp $bin "$bindir"
+        for f in $list; do
+            echo "Installing $f..."
+            cp $f "$destdir"
         done
     fi
 }
@@ -28,27 +28,32 @@ add_binary() {
 resquash() {
     if [ -z "$output" ]; then
         num=1
-        while [ -f "$core.$num" ]; do
+        while [ -f "$snap.$num" ]; do
             num=$((num + 1))
         done
-        output="$core.$num"
+        output="$snap.$num"
     fi
     mksquashfs "$rootdir" "$output" -noappend -comp gzip -no-xattrs -no-fragments
     echo "Created $output"
 }
 
 usage() {
-    echo "Usage: $0 [-o output] [-a bins] <core snap>"
+    echo "Usage: $0 [-o output] [-d destdir] <file list> <snap>"
     exit
 }
 
-while getopts "ho:b:" opt; do
+
+tmpdir=$(mktemp -d -t inject-XXXXXXXXXX)
+rootdir="$tmpdir/root"
+destdir="$rootdir"
+
+while getopts "ho:d:" opt; do
     case "${opt}" in
         o)
             output="$OPTARG"
             ;;
-        b)
-            addlist="$OPTARG"
+        d)
+            destdir="$rootdir/$OPTARG"
             ;;
         *)
             usage
@@ -57,15 +62,12 @@ while getopts "ho:b:" opt; do
 done
 shift $((OPTIND-1))
 
-if [ $# -lt 1 ]; then
+if [ $# -lt 2 ]; then
     usage
 fi
 
-
-core="$1"
-tmpdir=$(mktemp -d -t inject-XXXXXXXXXX)
-rootdir="$tmpdir/root"
-bindir="$rootdir"/bin/
+addlist="$1"
+snap="$2"
 
 function finish {
     echo "Cleaning up"
@@ -74,6 +76,6 @@ function finish {
 trap finish EXIT
 
 unsquash
-add_binary
+add_file
 resquash
 
