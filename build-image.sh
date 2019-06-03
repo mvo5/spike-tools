@@ -12,7 +12,7 @@ export PYTHONPATH=./ubuntu-image
 sudo ./inject-snap.sh \
     -o core18_*.snap \
     -d bin \
-    grub/grub-editenv,gptfdisk/sgdisk \
+    grub/grub-editenv,gptfdisk/sgdisk,rsync/rsync \
     core18_*.snap
 
 ./inject-snap.sh \

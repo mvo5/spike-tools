@@ -31,6 +31,14 @@ build_grub_editenv() {
     )
 }
 
+build_rsync() {
+    git clone git://git.samba.org/rsync.git
+    (cd rsync
+     ./configure CFLAGS=-static
+     make
+    )
+}
+
 get_ubuntu_core() {
     prnum=$1
     git clone https://github.com/CanonicalLtd/ubuntu-image
@@ -112,5 +120,8 @@ if [ ! -d e2fsprogs ]; then
 fi
 if [ ! -d grub ]; then
     build_grub_editenv
+fi
+if [ ! -d grub ]; then
+    build_rsync
 fi
 #get_ubuntu_core 171
