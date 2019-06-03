@@ -65,8 +65,8 @@ add_bind_mount() {
 }
 
 get_snapd_uc20() {
-    REPO="https://github.com/mvo5/snappy.git"
-    BRANCH="prepare-image-with-recovery"
+    REPO="https://github.com/cmatsuoka/snapd.git"
+    BRANCH="writable-ramdisk"
     
     GOPATH="$(pwd)/go"
     DST="$GOPATH/src/github.com/snapcore/snapd"
@@ -94,7 +94,7 @@ fi
 
 if [ ! -d ./core-build ]; then
     REPO="https://github.com/cmatsuoka/core-build.git"
-    BRANCH="install-script"
+    BRANCH="writable-ramdisk"
     
     git clone -b "$BRANCH" "$REPO"
 fi
