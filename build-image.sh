@@ -9,16 +9,14 @@ export PYTHONPATH=./ubuntu-image
     -b grub/grub-editenv \
     pc-kernel_*.snap core-build/initramfs
 
-#sudo ./inject-snap.sh \
-#    -o core18_*.snap \
-#    -d bin \
-#    gptfdisk/sgdisk \
-#    core18_*.snap
+sudo ./inject-snap.sh \
+    -o core18_*.snap \
+    -f usr/share/subiquity:console-conf-wrapper \
+    core18_*.snap
 
 ./inject-snap.sh \
     -o snapd_*.snap \
-    -d usr/lib/snapd \
-    go/snapd \
+    -f usr/lib/snapd:go/snapd \
     snapd_*.snap
 
 ubuntu-image/ubuntu-image snap \

@@ -15,12 +15,16 @@ unsquash() {
     unsquashfs -d "$rootdir" "$snap"
 }
 
-add_file() {
-    if [ ! -z "$addlist" ]; then
-        list=$(echo $addlist | tr , '\n')
-        for f in $list; do
-            echo "Installing $f..."
-            cp $f "$destdir"
+add_files() {
+    if [ "${#files[@]}" -gt 0 ]; then
+        for item in ${files[@]}; do
+            IFS=":" read -ra A <<< "$item"
+            destdir=${A[0]}
+            list=$(echo ${A[1]} | tr , '\n')
+            for f in $list; do
+                echo "Installing $f..."
+                cp $f "$rootdir/$destdir"
+            done
         done
     fi
 }
@@ -38,22 +42,22 @@ resquash() {
 }
 
 usage() {
-    echo "Usage: $0 [-o output] [-d destdir] <file list> <snap>"
+    echo "Usage: $0 [-o output] [-f destdir:filelist] <file list> <snap>"
     exit
 }
 
 
 tmpdir=$(mktemp -d -t inject-XXXXXXXXXX)
 rootdir="$tmpdir/root"
-destdir="$rootdir"
+files=()
 
-while getopts "ho:d:" opt; do
+while getopts "ho:f:" opt; do
     case "${opt}" in
         o)
             output="$OPTARG"
             ;;
-        d)
-            destdir="$rootdir/$OPTARG"
+        f)
+            files+="$OPTARG"
             ;;
         *)
             usage
@@ -62,12 +66,11 @@ while getopts "ho:d:" opt; do
 done
 shift $((OPTIND-1))
 
-if [ $# -lt 2 ]; then
+if [ $# -lt 1 ]; then
     usage
 fi
 
-addlist="$1"
-snap="$2"
+snap="$1"
 
 function finish {
     echo "Cleaning up"
@@ -76,6 +79,6 @@ function finish {
 trap finish EXIT
 
 unsquash
-add_file
+add_files
 resquash
 
