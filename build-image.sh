@@ -9,11 +9,11 @@ export PYTHONPATH=./ubuntu-image
     -b grub/grub-editenv \
     pc-kernel_*.snap core-build/initramfs
 
-sudo ./inject-snap.sh \
-    -o core18_*.snap \
-    -d bin \
-    gptfdisk/sgdisk \
-    core18_*.snap
+#sudo ./inject-snap.sh \
+#    -o core18_*.snap \
+#    -d bin \
+#    gptfdisk/sgdisk \
+#    core18_*.snap
 
 ./inject-snap.sh \
     -o snapd_*.snap \
