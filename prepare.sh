@@ -72,6 +72,7 @@ get_snapd_uc20() {
     (cd "$DST" && ./get-deps.sh)
 
     go build -o go/snap github.com/snapcore/snapd/cmd/snap
+    go build -o go/snapd github.com/snapcore/snapd/cmd/snapd
 
     # this alters the system state :/
     # use "./cleanup.sh" to restore things
@@ -107,9 +108,6 @@ snap download snapd  --channel=edge/experimental-uc20
 snap download core18   # core20 (once available)
 snap download --channel=20/edge pc
 
-if [ ! -d e2fsprogs ]; then
-    build_mke2fs
-fi
 if [ ! -d grub ]; then
     build_grub_editenv
 fi
