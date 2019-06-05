@@ -1,7 +1,6 @@
 package main
 
 import (
-	"bufio"
 	"flag"
 	"fmt"
 	"io/ioutil"
@@ -45,16 +44,9 @@ func main() {
 		log.Fatal("cannot get selected version: %s", err)
 	}
 
-	// spike shortcut: we should now start the recovery task passing version
-	//                 instead of creating a temp file
-	f, err := os.Create("/tmp/recovery-version")
-	if err != nil {
-		log.Fatal("cannot create version file: %s", err)
+	if err := exec.Command("snap", "recover", "--install", version).Run(); err != nil {
+		log.Fatal("cannot run install command: %s", err)
 	}
-	defer f.Close()
-	w := bufio.NewWriter(f)
-	w.WriteString(version)
-	w.Flush()
 }
 
 func getSelection(title string, timeout int, versions []string) (string, error) {

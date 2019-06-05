@@ -5,12 +5,37 @@ trap true HUP INT QUIT TSTP
 echo_on () { stty echo; }
 trap echo_on EXIT
 
-if grep -wq snap_mode=install /proc/cmdline; then
-    chooser -title "Select the recovery version to install" -timeout 10
+for x in $(cat /proc/cmdline); do
+    case $x in
+        snap_mode=*)
+            snap_mode=${x#*=}
+            ;;
+        snap_recovery_system=*)
+            snap_recovery_system=${x#*=}
+            ;;
+    esac
+done
+
+# Install mode: recreate writable from recovery
+
+if [ "$snap_mode" = "install" ]; then
+    chooser -title "Select the recovery version to install:" -timeout 10
     echo "Installing system, please wait..."
     echo
     journalctl -u snapd -f
 fi
+
+
+# Recover mode: mount existing writable
+# If the selected version is not the one already booted, we need to reboot
+
+if [ "$snap_mode" = "recover" ]; then
+    chooser -title "Select the recovery system version" -timeout 10
+    echo "Recovering system, please wait..."
+    echo
+    journalctl -u snapd -f
+fi
+
 
 # agetty only sets ICRNL if it has read the username and seen whether
 # it was terminated by CR or NL. We pass -n to agetty so that hasn't

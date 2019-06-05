@@ -18,6 +18,7 @@ sudo ./inject-snap.sh \
 ./inject-snap.sh \
     -o snapd_*.snap \
     -f usr/lib/snapd:go/snapd \
+    -f usr/bin:go/snap \
     snapd_*.snap
 
 ubuntu-image/ubuntu-image snap \
