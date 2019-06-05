@@ -12,6 +12,7 @@ export PYTHONPATH=./ubuntu-image
 sudo ./inject-snap.sh \
     -o core18_*.snap \
     -f usr/share/subiquity:console-conf-wrapper \
+    -f bin:chooser/chooser \
     core18_*.snap
 
 ./inject-snap.sh \

@@ -6,6 +6,7 @@ echo_on () { stty echo; }
 trap echo_on EXIT
 
 if grep -wq snap_mode=install /proc/cmdline; then
+    chooser -title "Select the recovery version to install" -timeout 10
     echo "Installing system, please wait..."
     echo
     journalctl -u snapd -f

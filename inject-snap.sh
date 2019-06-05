@@ -57,7 +57,7 @@ while getopts "ho:f:" opt; do
             output="$OPTARG"
             ;;
         f)
-            files+="$OPTARG"
+            files+=("$OPTARG")
             ;;
         *)
             usage

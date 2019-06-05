@@ -31,6 +31,12 @@ build_grub_editenv() {
     )
 }
 
+build_chooser() {
+    (cd chooser
+     go build chooser.go
+    )
+}
+
 get_ubuntu_core() {
     prnum=$1
     git clone https://github.com/CanonicalLtd/ubuntu-image
