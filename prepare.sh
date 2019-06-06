@@ -35,7 +35,7 @@ build_chooser() {
     go get github.com/gbin/goncurses
     sudo apt install libncursesw5-dev
     (cd chooser
-     go build chooser.go
+     go build chooser.go grubenv.go
     )
 }
 

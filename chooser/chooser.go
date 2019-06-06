@@ -8,6 +8,7 @@ import (
 	"os"
 	"os/exec"
 	"path"
+	"regexp"
 	"time"
 
 	nc "github.com/gbin/goncurses"
@@ -18,6 +19,7 @@ var name string
 func main() {
 
 	title := flag.String("title", "Choose the recovery version", "Menu title")
+	install := flag.Bool("install", false, "Run mode")
 	timeout := flag.Int("timeout", 5, "Timeout in seconds")
 	flag.Parse()
 
@@ -35,17 +37,57 @@ func main() {
 		log.Fatal("cannot get recovery versions: %s", err)
 	}
 
-	if err := umount(mntSysRecover); err != nil {
-		log.Fatal("cannot unmount recovery: %s", err)
-	}
-
 	version, err := getSelection(*title, *timeout, versions)
 	if err != nil {
 		log.Fatal("cannot get selected version: %s", err)
 	}
 
-	if err := exec.Command("snap", "recover", "--install", version).Run(); err != nil {
-		log.Fatal("cannot run install command: %s", err)
+	if *install {
+		if err := umount(mntSysRecover); err != nil {
+			log.Fatal("cannot unmount recovery: %s", err)
+		}
+
+		// Install mode
+		if err := exec.Command("snap", "recover", "--install", version).Run(); err != nil {
+			log.Fatal("cannot run install command: %s", err)
+		}
+		return
+	}
+
+	// Recovery mode
+
+	// See if we selected the same version we booted
+	bootVersion := getKernelParameter("snap_recovery_system")
+	if version == bootVersion {
+		// same version, we're good to go
+		if err := exec.Command("snap", "recover", version).Run(); err != nil {
+			log.Fatal("cannot run recover command: %s", err)
+		}
+	} else {
+		// different version, we need to reboot
+
+		// update recovery mode
+		env := NewEnv("/mnt/sys-recover/EFI/ubuntu/grubenv")
+		if err := env.Load(); err != nil {
+			log.Fatalf("cannot load recovery boot vars: %s", err)
+		}
+
+		// set version in grubenv
+		env.Set("snap_recovery_system", version)
+
+		// set mode to recover_reboot (no chooser)
+		env.Set("snap_mode", "recover_reboot")
+
+		if err := env.Save(); err != nil {
+			log.Fatalf("cannot save recovery boot vars: %s", err)
+		}
+
+		if err := umount(mntSysRecover); err != nil {
+			log.Fatal("cannot unmount recovery: %s", err)
+		} else {
+			// reboot (fast, we're on tmpfs)
+			restart()
+		}
 	}
 }
 
@@ -161,5 +203,52 @@ func umount(dev string) error {
 		return fmt.Errorf("cannot unmount device %s: %s", dev, err)
 	}
 
+	return nil
+}
+
+// From snapd/recovery/utils.go
+func getKernelParameter(name string) string {
+	f, err := os.Open("/proc/cmdline")
+	if err != nil {
+		return ""
+	}
+	defer f.Close()
+	cmdline, err := ioutil.ReadAll(f)
+	if err != nil {
+		return ""
+	}
+	re := regexp.MustCompile(fmt.Sprintf(`\b%s=([A-Za-z0-9_-]*)\b`, name))
+	match := re.FindSubmatch(cmdline)
+	if len(match) < 2 {
+		return ""
+	}
+	return string(match[1])
+}
+
+// From snapd/recovery/utils.go
+func enableSysrq() error {
+	f, err := os.Open("/proc/sys/kernel/sysrq")
+	if err != nil {
+		return err
+	}
+	defer f.Close()
+	f.Write([]byte("1\n"))
+	return nil
+}
+
+func restart() error {
+	if err := enableSysrq(); err != nil {
+		return err
+	}
+
+	f, err := os.OpenFile("/proc/sysrq-trigger", os.O_APPEND|os.O_WRONLY, 0600)
+	if err != nil {
+		return err
+	}
+	defer f.Close()
+	f.Write([]byte("b\n"))
+
+	// look away
+	select {}
 	return nil
 }
