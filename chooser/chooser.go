@@ -65,28 +65,8 @@ func main() {
 		}
 	} else {
 		// different version, we need to reboot
-
-		// update recovery mode
-		env := NewEnv("/mnt/sys-recover/EFI/ubuntu/grubenv")
-		if err := env.Load(); err != nil {
-			log.Fatalf("cannot load recovery boot vars: %s", err)
-		}
-
-		// set version in grubenv
-		env.Set("snap_recovery_system", version)
-
-		// set mode to recover_reboot (no chooser)
-		env.Set("snap_mode", "recover_reboot")
-
-		if err := env.Save(); err != nil {
-			log.Fatalf("cannot save recovery boot vars: %s", err)
-		}
-
-		if err := umount(mntSysRecover); err != nil {
-			log.Fatal("cannot unmount recovery: %s", err)
-		} else {
-			// reboot (fast, we're on tmpfs)
-			restart()
+		if err := exec.Command("snap", "recover", "--reboot", version).Run(); err != nil {
+			log.Fatal("cannot run recover --reboot command: %s", err)
 		}
 	}
 }
@@ -223,32 +203,4 @@ func getKernelParameter(name string) string {
 		return ""
 	}
 	return string(match[1])
-}
-
-// From snapd/recovery/utils.go
-func enableSysrq() error {
-	f, err := os.Open("/proc/sys/kernel/sysrq")
-	if err != nil {
-		return err
-	}
-	defer f.Close()
-	f.Write([]byte("1\n"))
-	return nil
-}
-
-func restart() error {
-	if err := enableSysrq(); err != nil {
-		return err
-	}
-
-	f, err := os.OpenFile("/proc/sysrq-trigger", os.O_APPEND|os.O_WRONLY, 0600)
-	if err != nil {
-		return err
-	}
-	defer f.Close()
-	f.Write([]byte("b\n"))
-
-	// look away
-	select {}
-	return nil
 }
