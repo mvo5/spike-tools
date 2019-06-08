@@ -42,11 +42,11 @@ func main() {
 		log.Fatal("cannot get selected version: %s", err)
 	}
 
-	if *install {
-		if err := umount(mntSysRecover); err != nil {
-			log.Fatal("cannot unmount recovery: %s", err)
-		}
+	if err := umount(mntSysRecover); err != nil {
+		log.Fatal("cannot unmount recovery: %s", err)
+	}
 
+	if *install {
 		// Install mode
 		if err := exec.Command("snap", "recover", "--install", version).Run(); err != nil {
 			log.Fatal("cannot run install command: %s", err)

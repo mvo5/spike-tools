@@ -19,25 +19,39 @@ done
 # Install mode: recreate writable from recovery
 
 if [ "$snap_mode" = "install" ]; then
-    chooser -install -title "Select the recovery version to install:" -timeout 10
-    echo "Installing system, please wait..."
-    echo
-    journalctl -u snapd -f
+    tty
+    if [ "$(tty)" = "/dev/tty1" ]; then
+        chooser -install -title "Select the recovery version to install:" -timeout 10
+        echo "Installing system, please wait..."
+        echo
+        journalctl -u snapd -f
+    else
+        cat
+    fi
 
 # Recover mode: mount existing writable
 # If the selected version is not the one already booted, we need to reboot
 
 elif [ "$snap_mode" = "recover" ]; then
-    chooser -title "Select the recovery system version" -timeout 10
-    echo "Recovering system, please wait..."
-    echo
-    journalctl -u snapd -f
+    tty
+    if [ "$(tty)" = "/dev/tty1" ]; then
+        chooser -title "Select the recovery system version" -timeout 10
+        echo "Recovering system, please wait..."
+        echo
+        journalctl -u snapd -f
+    else
+        cat
+    fi
 
 # recover_reboot is the mode set by recover when it needs a new kernel
 elif [ "$snap_mode" = "recover_reboot" ]; then
-    snap recover "$snap_recovery_system"
-
-    journalctl -u snapd -f
+    tty
+    if [ "$(tty)" = "/dev/tty1" ]; then
+        snap recover "$snap_recovery_system"
+        journalctl -u snapd -f
+    else
+        cat
+    fi
 fi
 
 # agetty only sets ICRNL if it has read the username and seen whether
