@@ -34,7 +34,7 @@ build_grub_editenv() {
 build_chooser() {
     go get github.com/gbin/goncurses
     sudo apt install libncursesw5-dev
-    (cd chooser
+    (cd chooser &&
      go build chooser.go
     )
 }
@@ -119,4 +119,9 @@ snap download --channel=20/edge pc
 if [ ! -d grub ]; then
     build_grub_editenv
 fi
+
+if [ ! -x chooser/chooser ]; then
+    build_chooser
+fi
+
 #get_ubuntu_core 171
