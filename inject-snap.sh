@@ -29,6 +29,17 @@ add_files() {
     fi
 }
 
+add_dirs() {
+    if [ "${#dirs[@]}" -gt 0 ]; then
+        for item in ${dirs[@]}; do
+            destdir=${item}
+            echo "Making $destdir"
+            mkdir -p "$rootdir/$destdir"
+        done
+    fi
+}
+
+
 resquash() {
     if [ -z "$output" ]; then
         num=1
@@ -51,13 +62,16 @@ tmpdir=$(mktemp -d -t inject-XXXXXXXXXX)
 rootdir="$tmpdir/root"
 files=()
 
-while getopts "ho:f:" opt; do
+while getopts "ho:f:d:" opt; do
     case "${opt}" in
         o)
             output="$OPTARG"
             ;;
         f)
             files+=("$OPTARG")
+            ;;
+        d)
+            dirs+=("$OPTARG")
             ;;
         *)
             usage
@@ -80,5 +94,6 @@ trap finish EXIT
 
 unsquash
 add_files
+add_dirs
 resquash
 
