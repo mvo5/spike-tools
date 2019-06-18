@@ -20,5 +20,5 @@ Approx. run times (qemu running on AMD R7 2700 w/ spinning disk):
 
 - from boot to version chooser: 40s
 - install time: approx. 30s
-- installed system to console-conf: 5min30s <- slooow
+- installed system to console-conf: 40s
 
