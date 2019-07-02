@@ -11,6 +11,11 @@ add_cleanup() {
     echo "$@" >> cleanup.sh
 }
 
+build_udev_hack() {
+    # See https://bugs.launchpad.net/ubuntu/+source/cryptsetup/+bug/1589083
+    gcc -shared -fPIC -o no-udev.so UdevDisableLib.c -ldl
+}
+
 build_grub_editenv() {
     git clone git://git.savannah.gnu.org/grub.git
     (cd grub
@@ -104,4 +109,8 @@ fi
 
 if [ ! -x chooser/chooser ]; then
     build_chooser
+fi
+
+if [ ! -f no-udev.so ]; then
+    build_udev_hack
 fi

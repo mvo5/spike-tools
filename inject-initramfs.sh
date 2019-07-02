@@ -33,14 +33,22 @@ inject() {
     done
 }
 
-add_binary() {
-    if [ ! -z "$addlist" ]; then
-        list=$(echo $addlist | tr , '\n')
-        for bin in $list; do
-            echo "Installing $bin..."
-            cp $bin "$bindir"
+add_files() {
+    if [ "${#files[@]}" -gt 0 ]; then
+        for item in ${files[@]}; do
+            IFS=":" read -ra A <<< "$item"
+            destdir=${A[0]}
+            list=$(echo ${A[1]} | tr , '\n')
+            for f in $list; do
+                echo "Installing $f..."
+                cp $f "$fsdir/main/$destdir"
+            done
         done
     fi
+}
+
+run_depmod() {
+    depmod -b "$fsdir/main" 4.15.0-54-generic
 }
 
 repack() {
@@ -66,13 +74,13 @@ usage() {
     exit
 }
 
-while getopts "ho:b:" opt; do
+while getopts "ho:f:" opt; do
     case "${opt}" in
         o)
             output="$OPTARG"
             ;;
-        b)
-            addlist="$OPTARG"
+        f)
+            files+=("$OPTARG")
             ;;
         *)
             usage
@@ -93,7 +101,6 @@ rootdir="$tmpdir/root"
 fsdir="$tmpdir/fs"
 confdir="$fsdir"/main/conf/conf.d/
 scriptdir="$fsdir"/main/scripts/
-bindir="$fsdir"/main/bin/
 
 mkdir -p "$confdir" "$scriptdir"
 
@@ -106,7 +113,8 @@ trap finish EXIT
 unsquash
 extract
 inject
-add_binary
+add_files
+run_depmod
 repack
 resquash
 

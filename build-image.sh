@@ -6,13 +6,30 @@ export PYTHONPATH=./ubuntu-image
 
 ./inject-initramfs.sh \
     -o pc-kernel_*.snap \
-    -b grub/grub-editenv \
+    -f bin:grub/grub-editenv \
+    -f bin:/sbin/cryptsetup \
+    -f bin:/sbin/dmsetup \
+    -f lib:/lib/x86_64-linux-gnu/libcryptsetup.so.12 \
+    -f lib:/usr/lib/x86_64-linux-gnu/libpopt.so.0 \
+    -f lib:/lib/x86_64-linux-gnu/libgcrypt.so.20 \
+    -f lib:/usr/lib/x86_64-linux-gnu/libargon2.so.0 \
+    -f lib:/lib/x86_64-linux-gnu/libjson-c.so.3 \
+    -f lib:/lib/x86_64-linux-gnu/libgpg-error.so.0 \
+    -f lib/modules/4.15.0-54-generic/kernel/drivers:/lib/modules/4.15.0-54-generic/kernel/drivers/md/dm-crypt.ko \
+    -f lib/modules/4.15.0-54-generic/kernel/drivers:/lib/modules/4.15.0-54-generic/kernel/arch/x86/crypto/aes-x86_64.ko \
+    -f lib/modules/4.15.0-54-generic/kernel/drivers:/lib/modules/4.15.0-54-generic/kernel/crypto/cryptd.ko \
+    -f lib/modules/4.15.0-54-generic/kernel/drivers:/lib/modules/4.15.0-54-generic/kernel/crypto/crypto_simd.ko \
+    -f lib/modules/4.15.0-54-generic/kernel/drivers:/lib/modules/4.15.0-54-generic/kernel/arch/x86/crypto/glue_helper.ko \
+    -f lib/modules/4.15.0-54-generic/kernel/drivers:/lib/modules/4.15.0-54-generic/kernel/crypto/af_alg.ko \
+    -f lib/modules/4.15.0-54-generic/kernel/drivers:/lib/modules/4.15.0-54-generic/kernel/crypto/algif_skcipher.ko \
+    -f lib:no-udev.so \
     pc-kernel_*.snap core-build/initramfs
 
 sudo ./inject-snap.sh \
     -o core20_*.snap \
     -f usr/share/subiquity:console-conf-wrapper \
     -f bin:chooser/chooser \
+    -f lib:no-udev.so \
     -d var/lib/snapd/seed \
     core20_*.snap
 

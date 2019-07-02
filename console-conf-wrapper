@@ -20,7 +20,7 @@ done
 
 if [ "$snap_mode" = "install" ]; then
     if [ "$(tty)" = "/dev/tty1" ]; then
-        chooser -install -title "Select the recovery version to install:" -timeout 10
+        chooser -install -title "Select the recovery version to install:" -timeout 5
         echo "Installing system, please wait..."
         echo
         journalctl -u snapd -f
