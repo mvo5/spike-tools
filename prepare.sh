@@ -39,15 +39,6 @@ build_chooser() {
     )
 }
 
-get_ubuntu_core() {
-    prnum=$1
-    git clone https://github.com/CanonicalLtd/ubuntu-image
-    (cd ubuntu-image
-     git fetch origin "pull/$prnum/head:pr-$prnum"
-     git checkout pr-"$prnum"
-    )
-}
-
 get_ubuntu_image() {
     REPO="https://github.com/mvo5/ubuntu-image.git"
     BRANCH="uc20-recovery"
@@ -123,5 +114,3 @@ fi
 if [ ! -x chooser/chooser ]; then
     build_chooser
 fi
-
-#get_ubuntu_core 171
