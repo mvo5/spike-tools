@@ -3,7 +3,7 @@
 # Use this script to inject stuff into an existing snap.
 #
 # Example:
-# $ ./inject-snap -o core18.snap -d bin mke2fs ../core18_970.snap
+# $ ./inject-snap -o core20.snap -d bin mke2fs ../core20_970.snap
 
 
 source /usr/share/initramfs-tools/hook-functions
