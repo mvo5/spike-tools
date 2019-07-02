@@ -10,11 +10,11 @@ export PYTHONPATH=./ubuntu-image
     pc-kernel_*.snap core-build/initramfs
 
 sudo ./inject-snap.sh \
-    -o core18_*.snap \
+    -o core20_*.snap \
     -f usr/share/subiquity:console-conf-wrapper \
     -f bin:chooser/chooser \
     -d var/lib/snapd/seed \
-    core18_*.snap
+    core20_*.snap
 
 ./inject-snap.sh \
     -o snapd_*.snap \
@@ -27,8 +27,8 @@ ubuntu-image/ubuntu-image snap \
     --snap pc_*.snap \
     --snap pc-kernel_*.snap \
     --snap snapd_*.snap \
-    --snap core18_*.snap \
-    mvo-amd64.signed
+    --snap core20_*.snap \
+    core20-mvo-amd64.model
 
 echo "Run something like (note that the OVMF from 18.04+ does not work)"
 echo "kvm -m 2000 -bios /usr/share/qemu/OVMF.fd pc.img"

@@ -97,14 +97,14 @@ if [ ! -x ./go/snap ]; then
     get_snapd_uc20
 fi
 
-if [ ! -e mvo-amd64.signed ]; then
-    wget https://people.canonical.com/~mvo/tmp/mvo-amd64.signed
+if [ ! -e core20-mvo-amd64.model ]; then
+    wget https://people.canonical.com/~mvo/tmp/core20-mvo-amd64.model
 fi
 
 # get the snaps
 snap download --channel=18 pc-kernel
 snap download snapd  --channel=edge/experimental-uc20
-snap download core18   # core20 (once available)
+snap download core20 --edge
 snap download --channel=20/edge pc
 
 if [ ! -d grub ]; then
