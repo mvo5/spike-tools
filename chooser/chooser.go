@@ -159,7 +159,7 @@ func countdown(countch chan int, val int) {
 }
 
 func getRecoveryVersions(mnt string) ([]string, error) {
-	files, err := ioutil.ReadDir(path.Join(mnt, "system"))
+	files, err := ioutil.ReadDir(path.Join(mnt, "systems"))
 	if err != nil {
 		return []string{}, fmt.Errorf("cannot read recovery list: %s", err)
 	}
