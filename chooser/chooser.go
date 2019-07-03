@@ -25,25 +25,25 @@ func main() {
 
 	mntSysRecover := "/mnt/sys-recover"
 	if err := os.MkdirAll(mntSysRecover, 0755); err != nil {
-		log.Fatal("cannot create mountpointr: %s", err)
+		log.Fatalf("cannot create mountpointr: %s", err)
 	}
 	// FIXME: determine recovery from label
 	if err := mount("/dev/sda2", mntSysRecover); err != nil {
-		log.Fatal("cannot mount recovery: %s", err)
+		log.Fatalf("cannot mount recovery: %s", err)
 	}
 
 	versions, err := getRecoveryVersions(mntSysRecover)
 	if err != nil {
-		log.Fatal("cannot get recovery versions: %s", err)
+		log.Fatalf("cannot get recovery versions: %s", err)
 	}
 
 	version, err := getSelection(*title, *timeout, versions)
 	if err != nil {
-		log.Fatal("cannot get selected version: %s", err)
+		log.Fatalf("cannot get selected version: %s", err)
 	}
 
 	if err := umount(mntSysRecover); err != nil {
-		log.Fatal("cannot unmount recovery: %s", err)
+		log.Fatalf("cannot unmount recovery: %s", err)
 	}
 
 	if *install {
@@ -61,12 +61,12 @@ func main() {
 	if version == bootVersion {
 		// same version, we're good to go
 		if err := exec.Command("snap", "recover", version).Run(); err != nil {
-			log.Fatal("cannot run recover command: %s", err)
+			log.Fatalf("cannot run recover command: %s", err)
 		}
 	} else {
 		// different version, we need to reboot
 		if err := exec.Command("snap", "recover", "--reboot", version).Run(); err != nil {
-			log.Fatal("cannot run recover --reboot command: %s", err)
+			log.Fatalf("cannot run recover --reboot command: %s", err)
 		}
 	}
 }
