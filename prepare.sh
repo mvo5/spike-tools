@@ -11,15 +11,6 @@ add_cleanup() {
     echo "$@" >> cleanup.sh
 }
 
-build_mke2fs() {
-    git clone https://git.kernel.org/pub/scm/fs/ext2/e2fsprogs.git
-    (cd e2fsprogs
-     git checkout v1.45.1
-     ./configure --disable-elf-shlibs
-     make LDFLAGS=-static
-    )
-}
-
 build_grub_editenv() {
     git clone git://git.savannah.gnu.org/grub.git
     (cd grub
