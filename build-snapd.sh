@@ -12,8 +12,8 @@ add_bind_mount() {
 }
 
 build_snapd() {
-    REPO="https://github.com/cmatsuoka/snapd.git"
-    BRANCH="writable-ramdisk"
+    REPO="https://github.com/snapcore/snapd.git"
+    BRANCH="uc20"
 
     GOPATH="$(pwd)/go"
     DST="$GOPATH/src/github.com/snapcore/snapd"

@@ -31,6 +31,8 @@ build_chooser() {
 }
 
 get_ubuntu_image() {
+    # FIXME: ask ubuntu-image team to create uc20 git branch *or*
+    #        switch to Maciej snap-create-image tool
     REPO="https://github.com/mvo5/ubuntu-image.git"
     BRANCH="uc20-recovery"
     
@@ -47,8 +49,8 @@ add_bind_mount() {
 }
 
 get_snapd_uc20() {
-    REPO="https://github.com/cmatsuoka/snapd.git"
-    BRANCH="writable-ramdisk"
+    REPO="https://github.com/snapcore/snapd.git"
+    BRANCH="uc20"
     
     GOPATH="$(pwd)/go"
     DST="$GOPATH/src/github.com/snapcore/snapd"
@@ -76,8 +78,8 @@ if [ ! -d ./ubuntu-image ]; then
 fi
 
 if [ ! -d ./core-build ]; then
-    REPO="https://github.com/cmatsuoka/core-build.git"
-    BRANCH="writable-ramdisk"
+    REPO="https://github.com/snapcore/core-build.git"
+    BRANCH="uc20"
     
     git clone -b "$BRANCH" "$REPO"
 fi
@@ -94,7 +96,7 @@ fi
 
 # get the snaps
 snap download --channel=18 pc-kernel
-snap download snapd  --channel=edge/experimental-uc20
+snap download snapd --edge
 snap download core20 --edge
 snap download --channel=20/edge pc
 
