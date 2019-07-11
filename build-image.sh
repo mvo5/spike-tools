@@ -23,6 +23,13 @@ export PYTHONPATH=./ubuntu-image
     -f lib/modules/4.15.0-54-generic/kernel/drivers:/lib/modules/4.15.0-54-generic/kernel/crypto/af_alg.ko \
     -f lib/modules/4.15.0-54-generic/kernel/drivers:/lib/modules/4.15.0-54-generic/kernel/crypto/algif_skcipher.ko \
     -f lib:no-udev.so \
+    -f bin:chooser/chooser \
+    -f lib:/usr/lib/x86_64-linux-gnu/libform.so.5 \
+    -f lib:/usr/lib/x86_64-linux-gnu/libmenu.so.5 \
+    -f lib:/lib/x86_64-linux-gnu/libncurses.so.5 \
+    -f lib:/lib/x86_64-linux-gnu/libtinfo.so.5 \
+    -f lib:/usr/lib/x86_64-linux-gnu/libpanel.so.5 \
+    -f lib/terminfo/l:/lib/terminfo/l/linux \
     pc-kernel_*.snap core-build/initramfs
 
 sudo ./inject-snap.sh \

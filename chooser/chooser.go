@@ -6,9 +6,7 @@ import (
 	"io/ioutil"
 	"log"
 	"os"
-	"os/exec"
 	"path"
-	"regexp"
 	"time"
 
 	nc "github.com/gbin/goncurses"
@@ -19,20 +17,12 @@ var name string
 func main() {
 
 	title := flag.String("title", "Choose the recovery version", "Menu title")
-	install := flag.Bool("install", false, "Run mode")
+	output := flag.String("output", "/run/chooser.out", "Output file location")
+	seed := flag.String("seed", "/run/ubuntu-seed", "Ubuntu-seed location")
 	timeout := flag.Int("timeout", 5, "Timeout in seconds")
 	flag.Parse()
 
-	mntSysRecover := "/mnt/sys-recover"
-	if err := os.MkdirAll(mntSysRecover, 0755); err != nil {
-		log.Fatalf("cannot create mountpointr: %s", err)
-	}
-	// FIXME: determine recovery from label
-	if err := mount("/dev/sda2", mntSysRecover); err != nil {
-		log.Fatalf("cannot mount recovery: %s", err)
-	}
-
-	versions, err := getRecoveryVersions(mntSysRecover)
+	versions, err := getRecoveryVersions(*seed)
 	if err != nil {
 		log.Fatalf("cannot get recovery versions: %s", err)
 	}
@@ -42,32 +32,10 @@ func main() {
 		log.Fatalf("cannot get selected version: %s", err)
 	}
 
-	if err := umount(mntSysRecover); err != nil {
-		log.Fatalf("cannot unmount recovery: %s", err)
-	}
-
-	if *install {
-		// Install mode
-		if err := exec.Command("snap", "recover", "--install", version).Run(); err != nil {
-			log.Fatal("cannot run install command: %s", err)
-		}
-		return
-	}
-
-	// Recovery mode
-
-	// See if we selected the same version we booted
-	bootVersion := getKernelParameter("snap_recovery_system")
-	if version == bootVersion {
-		// same version, we're good to go
-		if err := exec.Command("snap", "recover", version).Run(); err != nil {
-			log.Fatalf("cannot run recover command: %s", err)
-		}
-	} else {
-		// different version, we need to reboot
-		if err := exec.Command("snap", "recover", "--reboot", version).Run(); err != nil {
-			log.Fatalf("cannot run recover --reboot command: %s", err)
-		}
+	config := fmt.Sprintf("uc_recovery_system=%q", version)
+	if err := ioutil.WriteFile(*output, []byte(config), 0644); err != nil {
+		log.Fatalf("cannot write configuration file: %s", err)
+		os.Exit(1)
 	}
 }
 
@@ -168,39 +136,4 @@ func getRecoveryVersions(mnt string) ([]string, error) {
 		list[i] = f.Name()
 	}
 	return list, nil
-}
-
-func mount(dev, mountpoint string) error {
-	if err := exec.Command("mount", dev, mountpoint).Run(); err != nil {
-		return fmt.Errorf("cannot mount device %s: %s", dev, err)
-	}
-
-	return nil
-}
-
-func umount(dev string) error {
-	if err := exec.Command("umount", dev).Run(); err != nil {
-		return fmt.Errorf("cannot unmount device %s: %s", dev, err)
-	}
-
-	return nil
-}
-
-// From snapd/recovery/utils.go
-func getKernelParameter(name string) string {
-	f, err := os.Open("/proc/cmdline")
-	if err != nil {
-		return ""
-	}
-	defer f.Close()
-	cmdline, err := ioutil.ReadAll(f)
-	if err != nil {
-		return ""
-	}
-	re := regexp.MustCompile(fmt.Sprintf(`\b%s=([A-Za-z0-9_-]*)\b`, name))
-	match := re.FindSubmatch(cmdline)
-	if len(match) < 2 {
-		return ""
-	}
-	return string(match[1])
 }
