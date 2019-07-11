@@ -16,17 +16,6 @@ build_udev_hack() {
     gcc -shared -fPIC -o no-udev.so UdevDisableLib.c -ldl
 }
 
-build_grub_editenv() {
-    git clone git://git.savannah.gnu.org/grub.git
-    (cd grub
-     ./bootstrap
-     ./configure --disable-device-mapper
-     make
-     rm grub-editenv
-     make grub-editenv LDFLAGS=-static
-    )
-}
-
 build_chooser() {
     sudo apt install libncursesw5-dev libncurses5-dev
     go get github.com/gbin/goncurses
@@ -104,10 +93,6 @@ snap download --channel=18 pc-kernel
 snap download snapd --edge
 snap download core20 --edge
 snap download --channel=20/edge pc
-
-if [ ! -d grub ]; then
-    build_grub_editenv
-fi
 
 if [ ! -x chooser/chooser ]; then
     build_chooser

@@ -6,7 +6,7 @@ export PYTHONPATH=./ubuntu-image
 
 ./inject-initramfs.sh \
     -o pc-kernel_*.snap \
-    -f bin:grub/grub-editenv \
+    -f bin:/usr/bin/grub-editenv \
     -f bin:/sbin/cryptsetup \
     -f bin:/sbin/dmsetup \
     -f lib:/lib/x86_64-linux-gnu/libcryptsetup.so.12 \
