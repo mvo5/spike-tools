@@ -21,7 +21,6 @@ if [ -f /writable/system-data/chooser.out ]; then
     . /writable/system-data/chooser.out
 fi
 
-# Install mode: recreate writable from recovery
 if [ "$snap_mode" = "install" ]; then
     if [ "$(tty)" = "/dev/tty1" ]; then
         snap recover --install "$uc_recovery_system"
@@ -31,25 +30,11 @@ if [ "$snap_mode" = "install" ]; then
     else
         cat
     fi
-
-# Recover mode: mount existing writable
-# If the selected version is not the one already booted, we need to reboot
-
 elif [ "$snap_mode" = "recover" ]; then
     if [ "$(tty)" = "/dev/tty1" ]; then
-        # FIXME: check versions and reboot if needed
         snap recover "$uc_recovery_system"
         echo "Running system recovery, please wait..."
         echo
-        journalctl -u snapd -f
-    else
-        cat
-    fi
-
-# recover_reboot is the mode set by recover when it needs a new kernel
-elif [ "$snap_mode" = "recover_reboot" ]; then
-    if [ "$(tty)" = "/dev/tty1" ]; then
-        snap recover "$snap_recovery_system"
         journalctl -u snapd -f
     else
         cat
