@@ -41,6 +41,7 @@ add_files() {
             list=$(echo ${A[1]} | tr , '\n')
             for f in $list; do
                 echo "Installing $f..."
+                mkdir -p "$fsdir/main/$destdir"
                 cp $f "$fsdir/main/$destdir"
             done
         done
