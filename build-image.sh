@@ -9,6 +9,9 @@ export PYTHONPATH=./ubuntu-image
     -f bin:/usr/bin/grub-editenv \
     -f bin:/sbin/cryptsetup \
     -f bin:/sbin/dmsetup \
+    -f lib/udev/rules.d:/lib/udev/rules.d/55-dm.rules \
+    -f lib/udev/rules.d:/lib/udev/rules.d/60-persistent-storage-dm.rules \
+    -f lib/udev/rules.d:/lib/udev/rules.d/95-dm-notify.rules \
     -f lib:/lib/x86_64-linux-gnu/libcryptsetup.so.12 \
     -f lib:/usr/lib/x86_64-linux-gnu/libpopt.so.0 \
     -f lib:/lib/x86_64-linux-gnu/libgcrypt.so.20 \
@@ -36,7 +39,6 @@ sudo ./inject-snap.sh \
     -o core20_*.snap \
     -f usr/share/subiquity:console-conf-wrapper \
     -f bin:chooser/chooser \
-    -f lib:no-udev.so \
     -d var/lib/snapd/seed \
     core20_*.snap
 
