@@ -67,6 +67,24 @@ get_snapd_uc20() {
     done
 }
 
+get_fde_utils() {
+    REPO="https://github.com/chrisccoulson/ubuntu-core-fde-utils"
+    BRANCH="master"
+
+    GOPATH="$(pwd)/go"
+    DST="$GOPATH/src/github.com/chrisccoulson/ubuntu-core-fde-utils"
+
+    # fake GOPATH
+    export GOPATH
+    mkdir -p "$DST"
+    if [ ! -d "$DST/unlock" ]; then
+        git clone -b "$BRANCH" "$REPO" "$DST"
+    fi
+    (cd "$DST"/vendor && govendor sync)
+
+    go build -o go/unlock github.com/chrisccoulson/ubuntu-core-fde-utils/unlock
+}
+
 if [ ! -d ./ubuntu-image ]; then
     get_ubuntu_image
 fi
@@ -82,6 +100,10 @@ fi
 #        we can just use the "snapd" snap from channel=20
 if [ ! -x ./go/snap ]; then
     get_snapd_uc20
+fi
+
+if [ ! -x ./go/unlock ]; then
+    get_fde_utils
 fi
 
 if [ ! -e core20-mvo-amd64.model ]; then
