@@ -4,6 +4,12 @@ set -e
 
 export PYTHONPATH=./ubuntu-image
 
+if ! grep -q /usr/bin/snap /proc/self/mountinfo; then
+    echo "No bind mount of /usr/bin/snap found, please run:"
+    echo "./build-snapd.sh"
+    exit 1
+fi
+
 ./inject-initramfs.sh \
     -o pc-kernel_*.snap \
     -f bin:/usr/bin/grub-editenv \
