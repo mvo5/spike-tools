@@ -1,10 +1,11 @@
 
-
 To run the spike:
 
 ./prepare.sh
 ./build-image.sh
 ./run-test.sh
+
+Secure boot keys must be manually enrolled in OVMF.
 
 
 If you're hacking snapd:
@@ -12,13 +13,4 @@ If you're hacking snapd:
 ./build-snapd.sh
 ./build-image.sh
 ./run-test.sh
-
-
-
-
-Approx. run times (qemu running on AMD R7 2700 w/ spinning disk):
-
-- from boot to version chooser: 40s
-- install time: approx. 30s
-- installed system to console-conf: 40s
 

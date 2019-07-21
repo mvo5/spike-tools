@@ -61,6 +61,37 @@ get_fde_utils() {
     go build -o go/unlock github.com/chrisccoulson/ubuntu-core-fde-utils/unlock
 }
 
+generate_keys() {
+    echo "Generating keys..."
+
+    TEMP=$(mktemp -d -t XXXXXXXXXX)
+
+    cp /usr/share/OVMF/OVMF_VARS.fd .
+
+    mkdir sbtestdb
+    (cd sbtestdb
+
+     openssl req -new -x509 -newkey rsa:2048 -keyout TestPK.key -out TestPK.crt \
+        -outform DER -days 3650 -passout pass:1234 -subj "/CN=Test Platform Key"
+     openssl req -new -x509 -newkey rsa:2048 -keyout TestKEK.key -out TestKEK.crt \
+        -outform DER -days 3650 -passout pass:1234 -subj "/CN=Test Key Exchange Key"
+     openssl req -new -x509 -newkey rsa:2048 -keyout TestUEFI.key -out TestUEFI.crt \
+        -outform DER -days 3650 -passout pass:1234 -subj "/CN=Test UEFI Signing Key"
+
+     # Download Microsoft’s UEFI CA certificate
+     wget --content-disposition https://go.microsoft.com/fwlink/p/?linkid=321194
+
+     dd if=/dev/zero of=drive.img count=50 bs=1M
+
+     mkfs.vfat drive.img
+     sudo mount drive.img "$TEMP"
+     sudo cp *.crt "$TEMP"
+     sudo umount "$TEMP"
+
+     rmdir "$TEMP"
+    )
+}
+
 if [ ! -d ./ubuntu-image ]; then
     get_ubuntu_image
 fi
@@ -98,4 +129,8 @@ fi
 
 if [ ! -f no-udev.so ]; then
     build_udev_hack
+fi
+
+if [ ! -f sbtestdb/drive.img ]; then
+    generate_keys
 fi
