@@ -25,6 +25,7 @@ export PYTHONPATH=./ubuntu-image
     -f lib/modules/4.15.0-54-generic/kernel/drivers:/lib/modules/4.15.0-54-generic/kernel/arch/x86/crypto/glue_helper.ko \
     -f lib/modules/4.15.0-54-generic/kernel/drivers:/lib/modules/4.15.0-54-generic/kernel/crypto/af_alg.ko \
     -f lib/modules/4.15.0-54-generic/kernel/drivers:/lib/modules/4.15.0-54-generic/kernel/crypto/algif_skcipher.ko \
+    -f bin:go/unlock \
     -f lib:no-udev.so \
     -f bin:chooser/chooser \
     -f lib:/usr/lib/x86_64-linux-gnu/libform.so.5 \
@@ -34,6 +35,7 @@ export PYTHONPATH=./ubuntu-image
     -f lib:/usr/lib/x86_64-linux-gnu/libpanel.so.5 \
     -f lib/terminfo/l:/lib/terminfo/l/linux \
     pc-kernel_*.snap core-build/initramfs
+
 
 sudo ./inject-snap.sh \
     -o core20_*.snap \
@@ -51,7 +53,8 @@ sudo ./inject-snap.sh \
 #skip mtools warning
 export MTOOLS_SKIP_CHECK=1
 
-ubuntu-image/ubuntu-image snap \
+UBUNTU_IMAGE_SNAP_CMD=$(pwd)/go/snap \
+    ubuntu-image/ubuntu-image snap \
     --image-size 4G \
     --snap pc_*.snap \
     --snap pc-kernel_*.snap \
