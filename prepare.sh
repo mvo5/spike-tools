@@ -2,15 +2,6 @@
 
 set -e
 
-add_cleanup() {
-    if [ ! -x cleanup.sh ]; then
-        echo '#!/bin/sh' > cleanup.sh
-        echo '# (no set -e on purpose)'  >> cleanup.sh
-        chmod +x cleanup.sh
-    fi
-    echo "$@" >> cleanup.sh
-}
-
 build_udev_hack() {
     # See https://bugs.launchpad.net/ubuntu/+source/cryptsetup/+bug/1589083
     gcc -shared -fPIC -o no-udev.so UdevDisableLib.c -ldl
@@ -33,15 +24,6 @@ get_ubuntu_image() {
     git clone -b "$BRANCH" "$REPO"
 }
 
-add_bind_mount() {
-    SRC="$1"
-    DST="$2"
-    if [ -e "$DST" ]; then
-        sudo mount -o bind "$SRC" "$DST"
-        add_cleanup "sudo umount $DST"
-    fi
-}
-
 get_snapd_uc20() {
     REPO="https://github.com/snapcore/snapd.git"
     BRANCH="uc20"
@@ -59,12 +41,6 @@ get_snapd_uc20() {
 
     go build -o go/snap github.com/snapcore/snapd/cmd/snap
     go build -o go/snapd github.com/snapcore/snapd/cmd/snapd
-
-    # this alters the system state :/
-    # use "./cleanup.sh" to restore things
-    for m in /snap/core/current/usr/bin/snap /snap/snapd/current/usr/bin/snap /usr/bin/snap; do
-        add_bind_mount "./go/snap" "$m"
-    done
 }
 
 get_fde_utils() {

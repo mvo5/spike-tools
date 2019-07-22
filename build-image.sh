@@ -50,7 +50,9 @@ sudo ./inject-snap.sh \
     -f usr/bin:go/snap \
     snapd_*.snap
 
-ubuntu-image/ubuntu-image snap \
+
+UBUNTU_IMAGE_SNAP_CMD=$(pwd)/go/snap \
+    ubuntu-image/ubuntu-image snap \
     --image-size 4G \
     --snap pc_*.snap \
     --snap pc-kernel_*.snap \
