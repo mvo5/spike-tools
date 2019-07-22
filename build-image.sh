@@ -50,6 +50,8 @@ sudo ./inject-snap.sh \
     -f usr/bin:go/snap \
     snapd_*.snap
 
+#skip mtools warning
+export MTOOLS_SKIP_CHECK=1
 
 UBUNTU_IMAGE_SNAP_CMD=$(pwd)/go/snap \
     ubuntu-image/ubuntu-image snap \
