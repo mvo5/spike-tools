@@ -10,7 +10,7 @@ usage() {
 while getopts "hc" opt; do
     case "${opt}" in
         c)
-            rm "$TPM"/*
+            rm -f "$TPM"/*
             ;;
         *)
             usage
