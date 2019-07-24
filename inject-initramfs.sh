@@ -48,8 +48,17 @@ add_files() {
     fi
 }
 
-run_depmod() {
-    depmod -b "$fsdir/main" 4.15.0-54-generic
+add_modules() {
+    kver=$(basename "$rootdir"/modules/*)
+    echo "Kernel version $kver"
+    if [ "${#modules[@]}" -gt 0 ]; then
+        for mod in ${modules[@]}; do
+            echo "Installing kernel module $mod..."
+            find "$rootdir/modules/$kver/" -name "$mod" -exec cp {} \
+                "$fsdir/main/lib/modules/$kver/kernel/drivers/" \;
+        done
+        depmod -b "$fsdir/main" 4.15.0-54-generic
+    fi
 }
 
 repack() {
@@ -71,17 +80,20 @@ resquash() {
 }
 
 usage() {
-    echo "Usage: $0 [-o output] [-a bins] <kernel snap> <initramfs>"
+    echo "Usage: $0 [-o output] [-f destdir:srcfile] [-m module] <kernel snap> <initramfs>"
     exit
 }
 
-while getopts "ho:f:" opt; do
+while getopts "ho:f:m:" opt; do
     case "${opt}" in
         o)
             output="$OPTARG"
             ;;
         f)
             files+=("$OPTARG")
+            ;;
+        m)
+            modules+=("$OPTARG")
             ;;
         *)
             usage
@@ -115,7 +127,7 @@ unsquash
 extract
 inject
 add_files
-run_depmod
+add_modules
 repack
 resquash
 

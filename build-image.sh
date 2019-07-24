@@ -18,13 +18,13 @@ export PYTHONPATH=./ubuntu-image
     -f lib:/usr/lib/x86_64-linux-gnu/libargon2.so.0 \
     -f lib:/lib/x86_64-linux-gnu/libjson-c.so.3 \
     -f lib:/lib/x86_64-linux-gnu/libgpg-error.so.0 \
-    -f lib/modules/4.15.0-54-generic/kernel/drivers:/lib/modules/4.15.0-54-generic/kernel/drivers/md/dm-crypt.ko \
-    -f lib/modules/4.15.0-54-generic/kernel/drivers:/lib/modules/4.15.0-54-generic/kernel/arch/x86/crypto/aes-x86_64.ko \
-    -f lib/modules/4.15.0-54-generic/kernel/drivers:/lib/modules/4.15.0-54-generic/kernel/crypto/cryptd.ko \
-    -f lib/modules/4.15.0-54-generic/kernel/drivers:/lib/modules/4.15.0-54-generic/kernel/crypto/crypto_simd.ko \
-    -f lib/modules/4.15.0-54-generic/kernel/drivers:/lib/modules/4.15.0-54-generic/kernel/arch/x86/crypto/glue_helper.ko \
-    -f lib/modules/4.15.0-54-generic/kernel/drivers:/lib/modules/4.15.0-54-generic/kernel/crypto/af_alg.ko \
-    -f lib/modules/4.15.0-54-generic/kernel/drivers:/lib/modules/4.15.0-54-generic/kernel/crypto/algif_skcipher.ko \
+    -m dm-crypt.ko \
+    -m aes-x86_64.ko \
+    -m cryptd.ko \
+    -m crypto_simd.ko \
+    -m glue_helper.ko \
+    -m af_alg.ko \
+    -m algif_skcipher.ko \
     -f bin:go/unlock \
     -f lib:no-udev.so \
     -f bin:chooser/chooser \
