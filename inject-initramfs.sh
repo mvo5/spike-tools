@@ -57,7 +57,7 @@ add_modules() {
             find "$rootdir/modules/$kver/" -name "$mod" -exec cp {} \
                 "$fsdir/main/lib/modules/$kver/kernel/drivers/" \;
         done
-        depmod -b "$fsdir/main" 4.15.0-54-generic
+        depmod -b "$fsdir/main" "$kver"
     fi
 }
 
