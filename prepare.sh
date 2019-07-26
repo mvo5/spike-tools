@@ -92,6 +92,10 @@ generate_keys() {
     )
 }
 
+if ! snap list swtpm-mvo; then
+    snap install --beta swtpm-mvo
+fi
+
 if [ ! -d ./ubuntu-image ]; then
     get_ubuntu_image
 fi

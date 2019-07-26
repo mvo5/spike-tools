@@ -62,5 +62,4 @@ UBUNTU_IMAGE_SNAP_CMD=$(pwd)/go/snap \
     --snap core20_*.snap \
     core20-mvo-amd64.model
 
-echo "Run something like (note that the OVMF from 18.04+ does not work)"
-echo "kvm -m 2000 -bios /usr/share/qemu/OVMF.fd pc.img"
+echo "Run with: ./run-test.sh"

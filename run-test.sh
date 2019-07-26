@@ -20,10 +20,7 @@ done
 shift $((OPTIND-1))
 
 
-mkdir -p "$TPM"
-echo "Starting $TPM"
-sudo swtpm socket --tpmstate dir="$TPM" --tpm2 --ctrl type=unixio,path="$TPM"/swtpm-sock &
-sleep 2 # this should be changed to a netstat query
+TPM="/var/snap/swtpm-mvo/current/"
 
 sudo kvm \
   -smp 2 -m 256 -netdev user,id=mynet0,hostfwd=tcp::8022-:22,hostfwd=tcp::8090-:80 \
